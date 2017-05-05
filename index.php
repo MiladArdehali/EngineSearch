@@ -87,32 +87,27 @@
 </html>
 
 <?php
+$bdd = new PDO('mysql:host=localhost;dbname=search;charset=utf8', 'root', 'formation');
 
+if (isset($_POST["submit"])) {
+    $s_title = addslashes($_POST["s_title"]);
+    $s_link = addslashes($_POST["slink"]);
+    $s_key = addslashes($_POST["skey"]);
+    $s_des = addslashes($_POST["s_des"]);
+    $_simg = addslashes($_FILES["simg"] ["name"]);
 
-    $bdd = new PDO('mysql:host=localhost;dbname=search;charset=utf8', 'root', 'formation');
+    if (move_uploaded_file($_FILES["simg"] ["tmp_name"], "img/" . $_FILES["simg"]["name"])) {
+        $sql = "insert into website(site_title, site_link, site_key, site_des, site_img) values ('$s_title','$s_link','$s_key','$s_des','$_simg')";
+        $rs = $bdd->query($sql);
 
-if(isset($_POST["submit"])){
-    $s_title = $_POST["s_title"];
-    $s_link = $_POST["slink"];
-    $s_key = $_POST["skey"];
-    $s_des = $_POST["s_des"];
-    $_simg = $_FILES["simg"] ["name"];
-
-if(move_uploaded_file($_FILES["simg"] ["tmp_name"], "img/".$_FILES["simg"]["name"])){
-    $sql = "insert into website(site_title, site_link, site_key, site_des, site_img) values ('$s_title','$s_link','$s_key','$s_des','$_simg')";
-    
-    $rs = $bdd->query($sql);
-    
-    if($rs){
-        echo "<script> alert('site charger dans la base de donnée avec succes')</script>";
-    }else{
-        echo "<script> alert('erreur lors de l'enregistrement dans la base de donnée)</script>";
+        if ($rs) {
+            echo "<script> alert('site charger dans la base de donnée avec succes')</script>";
+        } else {
+            echo "<script> alert('erreur lors de l'enregistrement dans la base de donnée)</script>";
+        }
     }
-    
-}
-
 }
 ?>
 
 
-//https://www.youtube.com/watch?v=ucLMyrTJiCg&index=1&list=PLbsexNAdMaFwOoH1MiOa8GxLuc7M_gEB4#t=641.482712
+<!---- https://www.youtube.com/watch?v=ucLMyrTJiCg&index=1&list=PLbsexNAdMaFwOoH1MiOa8GxLuc7M_gEB4#t=641.482712 --->
