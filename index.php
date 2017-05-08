@@ -1,77 +1,51 @@
+<?php
+session_start();
+$_SESSION['serveur'] = 'mysql.hostinger.fr';
+$_SESSION['loginBDD'] = 'u652047723_milad';
+$_SESSION['password'] = 'bmw530d2002';
+$_SESSION['database'] = 'u652047723_data';
+
+?>
 <!DOCTYPE html>
+
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Notre moteur de recherche</title>
+        <title>Recherche des infos</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" 
               integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" 
               crossorigin="anonymous">
-    <body>
-        <div class="container">
-            <br>
-            <center><h2><b>Inserer un site internet</b></h2></center>
-            <br>
-            <form action="index.php" method="POST" enctype="multipart/form-data">
+    </head>
+    <body onload="Id()">
 
-                <div class="form-group">
-                    <div class="row">
-                        <label class="col-sm-2" for="stitle"> Titre du site </label>
+        <script>
+            function Id() {
+                document.search_box.search.focus();
+            }
 
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="stitle" name="s_title" placeholder="Entrer votre titre ici" required>
-                        </div>
-                    </div>
-                </div>
+        </script>
 
-                <div class="form-group">
-                    <div class="row">
-                        <label class="col-sm-2" for="slink"> Lien du site </label>
+        <style>
+            body{
+                margin: 12%;
+            }
 
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="slink" name="slink" placeholder="Entrer votre lien vers le site" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <label class="col-sm-2" for="skey"> Mot cle pour le site </label>
+        </style>
 
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="skey" name="skey" placeholder="Entrer ici le mot cle permettant de retrouver le site" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <label class="col-sm-2" for="s_des"> Description du site </label>
-
-                        <div class="col-sm-10">
-                            <textarea  class="form-control" id="s_des" name="s_des" placeholder="Entrer la description du site ici" required></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <label class="col-sm-2" for="simg"> Image du site </label>
-                        <div class="col-sm-10">
-                            <input type="file" class="form-control" name="simg" required>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-
-                    <div class="row">
-                        <center>
-                            <input type="submit" class="btn btn-outline-success" name="submit" value="Ajouter le site internet">
-                            <input type="reset" class="btn btn-outline-danger" name="cancel" value="Vider le formulaire">
-                        </center>
-                    </div>    
-
-                </div>
-
-            </form>
-
+        <form name="search_box" action="result.php" method="GET">
+            <center>
+                <img src="logo/search_hat.png" height="150px" class="img-responsive" alt="Search">
+                <input type="text" class="form-control" name="search" style="width:60%; margin-top: 20px">
+                <input type="submit" class="btn btn-outline-primary" value="Rechercher" name="search_button" style="margin-top: 20px;">
+            </center>
+        </form>
+        <br>
+        <br>
+        <div>
+            <center>
+                <a href="donnee.php" target='_blank'><input type='button' class='btn btn-info' name='search_complete' value='Réfèrencez vos infos'></a>
+                <a href="connect.php" target='_blank'><input type='button' class='btn btn-warning' name='acces_stagiaire' value='Acces suivi stagiaire'></a>
+            </center>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" 
@@ -84,30 +58,8 @@
                 integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" 
         crossorigin="anonymous"></script>
     </body>
+    
+    <footer>
+        <h6><center style="margin-top: 50px"><?php include 'piedDePage.php'; ?></center></h6>
+    </footer>
 </html>
-
-<?php
-$bdd = new PDO('mysql:host=localhost;dbname=search;charset=utf8', 'root', 'formation');
-
-if (isset($_POST["submit"])) {
-    $s_title = addslashes($_POST["s_title"]);
-    $s_link = addslashes($_POST["slink"]);
-    $s_key = addslashes($_POST["skey"]);
-    $s_des = addslashes($_POST["s_des"]);
-    $_simg = addslashes($_FILES["simg"] ["name"]);
-
-    if (move_uploaded_file($_FILES["simg"] ["tmp_name"], "img/" . $_FILES["simg"]["name"])) {
-        $sql = "insert into website(site_title, site_link, site_key, site_des, site_img) values ('$s_title','$s_link','$s_key','$s_des','$_simg')";
-        $rs = $bdd->query($sql);
-
-        if ($rs) {
-            echo "<script> alert('site charger dans la base de donnée avec succes')</script>";
-        } else {
-            echo "<script> alert('erreur lors de l'enregistrement dans la base de donnée)</script>";
-        }
-    }
-}
-?>
-
-
-<!---- https://www.youtube.com/watch?v=ucLMyrTJiCg&index=1&list=PLbsexNAdMaFwOoH1MiOa8GxLuc7M_gEB4#t=641.482712 --->

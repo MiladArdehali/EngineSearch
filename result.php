@@ -1,3 +1,10 @@
+<?php
+session_start();
+$serveur = $_SESSION['serveur'];
+$loginBDD = $_SESSION['loginBDD'];
+$password = $_SESSION['password'];
+$database = $_SESSION['database'];
+?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -32,7 +39,7 @@
                 <div class="row" style="background: #F2F2F2;">
 
                     <div class="col-sm-1" style="margin-left:20px">
-                        <a href="search.php"><img src="img/search_hat.png" height="60px"></a>
+                        <a href="index.php"><img src="logo/search_hat.png" height="60px"></a>
                     </div>
 
                     <div class="col-sm-6" style="margin-left:10px;">
@@ -54,7 +61,7 @@
                 <tr>
 
                     <?php
-                    $bdd = new PDO('mysql:host=localhost;dbname=search;charset=utf8', 'root', 'formation');
+                    $bdd = new PDO("mysql:host=$serveur;dbname=$database;charset=utf8", $loginBDD, $password);
 
                     if (isset($_GET['search_button'])) {
                         $search = $_GET['search'];
@@ -63,30 +70,33 @@
                             echo "<center><b>Veuillez saisir une recherche</b></center>";
                             exit();
                         }
-                        $sql_image = "select * from website where site_key like '%$search%' limit 0, 4";
+                        $sql_image = "select * from website where site_key like '%$search%' limit 6";
                         $rs = $bdd->query($sql_image);
-
-                        if (!$rs) {
-                            echo "<center><h4><b> Ooops!!! Il n'y a aucun élèment corrspondant à votre recherche</b></h4></center>";
+                        $row = $rs->fetchAll();
+                        if (!$row) {
+                            echo "<center><h4><b> Ooops!!! Il n'y a aucun élèment correspondant à votre recherche</b></h4></center>";
                             exit();
                         }
 
                         echo "<font size='+1' color='#1a1aff'>Image pour la recherche : " . $search . "</font>";
 
-                        $row = $rs->fetchAll();
+
+                        echo "<br>";
 
                         foreach ($row as $key) {
-                            echo "<td>
+                            if ($key[5]) {
+                                echo "<td>
                                     <table style='margin-top:10px'>
                                         <tr>
                                             <td>
                                                 <a target='_blank' href='images.php?id=$search'>
-                                                <img src='img/$key[5]' height='90px'>
+                                                <img src='img/$key[5]' height='90px' >
                                                 </a>
                                             </td>
                                         </tr>
                                     </table>
                                 </td>";
+                            }
                         }
                     }
                     ?>
@@ -108,11 +118,19 @@
             $row_text = $rs_text->fetchAll();
 
             foreach ($row_text as $value) {
-                
-                echo "<a href='http://$value[2]' target='_blank'><font size='4' color='#0000cc'><b>$value[1]</b></font></a><br>";
-                echo "<font size='3' color='#006400'>$value[2]</font><br>";
+
+                if ($value[1]) {
+                    echo "<a href='resultatInterne.php?id=$value[0]' target='_blank'><font size='4' color='#0000cc'><b>$value[1]</b></font></a><br>";
+                }
+
+                if ($value[2]) {
+                    echo "<font size='3' color='#006400'><a href='http://$value[2]' target='_blank'>$value[2]</a></font><br>";
+                }
+
+                if (strlen($value[4]) > 20) {
+                    $value[4] = substr($value[4], 0, 20) . "<a href='resultatInterne.php?id=$value[0]' target='_blank'> ...lire la suite </a>";
+                }
                 echo "<font size='3' color='#666666'>$value[4]</font><br><br>";
-                
             }
             ?>
 
